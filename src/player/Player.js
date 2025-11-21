@@ -170,18 +170,18 @@ class Player {
    * Uses the player's bounding box to prevent placing blocks inside the player
    */
   isPositionOccupiedByPlayer(x, y, z) {
-    // Define player bounding box
-    const minX = this.position.x - PLAYER_CONFIG.radius;
-    const maxX = this.position.x + PLAYER_CONFIG.radius;
-    const minY = this.position.y;
-    const maxY = this.position.y + PLAYER_CONFIG.height;
-    const minZ = this.position.z - PLAYER_CONFIG.radius;
-    const maxZ = this.position.z + PLAYER_CONFIG.radius;
+    // Define player bounding box and cache floor values for performance
+    const minX = Math.floor(this.position.x - PLAYER_CONFIG.radius);
+    const maxX = Math.floor(this.position.x + PLAYER_CONFIG.radius);
+    const minY = Math.floor(this.position.y);
+    const maxY = Math.floor(this.position.y + PLAYER_CONFIG.height);
+    const minZ = Math.floor(this.position.z - PLAYER_CONFIG.radius);
+    const maxZ = Math.floor(this.position.z + PLAYER_CONFIG.radius);
     
     // Check if block position intersects with player bounding box
-    return x >= Math.floor(minX) && x <= Math.floor(maxX) &&
-           y >= Math.floor(minY) && y <= Math.floor(maxY) &&
-           z >= Math.floor(minZ) && z <= Math.floor(maxZ);
+    return x >= minX && x <= maxX &&
+           y >= minY && y <= maxY &&
+           z >= minZ && z <= maxZ;
   }
 
   placeBlock() {
@@ -202,18 +202,18 @@ class Player {
   checkCollision(offset) {
     const testPos = this.position.clone().add(offset);
     
-    // Define player bounding box
-    const minX = testPos.x - PLAYER_CONFIG.radius;
-    const maxX = testPos.x + PLAYER_CONFIG.radius;
-    const minY = testPos.y;
-    const maxY = testPos.y + PLAYER_CONFIG.height;
-    const minZ = testPos.z - PLAYER_CONFIG.radius;
-    const maxZ = testPos.z + PLAYER_CONFIG.radius;
+    // Define player bounding box and cache floor values for performance
+    const minX = Math.floor(testPos.x - PLAYER_CONFIG.radius);
+    const maxX = Math.floor(testPos.x + PLAYER_CONFIG.radius);
+    const minY = Math.floor(testPos.y);
+    const maxY = Math.floor(testPos.y + PLAYER_CONFIG.height);
+    const minZ = Math.floor(testPos.z - PLAYER_CONFIG.radius);
+    const maxZ = Math.floor(testPos.z + PLAYER_CONFIG.radius);
     
     // Check all blocks that intersect with the player's bounding box
-    for (let x = Math.floor(minX); x <= Math.floor(maxX); x++) {
-      for (let y = Math.floor(minY); y <= Math.floor(maxY); y++) {
-        for (let z = Math.floor(minZ); z <= Math.floor(maxZ); z++) {
+    for (let x = minX; x <= maxX; x++) {
+      for (let y = minY; y <= maxY; y++) {
+        for (let z = minZ; z <= maxZ; z++) {
           const block = this.world.getBlock(x, y, z);
           if (block !== BlockType.AIR) {
             // Found a collision with a solid block
