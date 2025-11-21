@@ -170,13 +170,13 @@ class Player {
    * Uses the player's bounding box to prevent placing blocks inside the player
    */
   isPositionOccupiedByPlayer(x, y, z) {
-    // Define player bounding box and cache floor values for performance
+    // Define player bounding box and cache floor/ceil values for performance
     const minX = Math.floor(this.position.x - PLAYER_CONFIG.radius);
-    const maxX = Math.floor(this.position.x + PLAYER_CONFIG.radius);
+    const maxX = Math.ceil(this.position.x + PLAYER_CONFIG.radius);
     const minY = Math.floor(this.position.y);
-    const maxY = Math.floor(this.position.y + PLAYER_CONFIG.height);
+    const maxY = Math.ceil(this.position.y + PLAYER_CONFIG.height);
     const minZ = Math.floor(this.position.z - PLAYER_CONFIG.radius);
-    const maxZ = Math.floor(this.position.z + PLAYER_CONFIG.radius);
+    const maxZ = Math.ceil(this.position.z + PLAYER_CONFIG.radius);
     
     // Check if block position intersects with player bounding box
     return x >= minX && x <= maxX &&
@@ -202,13 +202,13 @@ class Player {
   checkCollision(offset) {
     const testPos = this.position.clone().add(offset);
     
-    // Define player bounding box and cache floor values for performance
+    // Define player bounding box and cache floor/ceil values for performance
     const minX = Math.floor(testPos.x - PLAYER_CONFIG.radius);
-    const maxX = Math.floor(testPos.x + PLAYER_CONFIG.radius);
+    const maxX = Math.ceil(testPos.x + PLAYER_CONFIG.radius);
     const minY = Math.floor(testPos.y);
-    const maxY = Math.floor(testPos.y + PLAYER_CONFIG.height);
+    const maxY = Math.ceil(testPos.y + PLAYER_CONFIG.height);
     const minZ = Math.floor(testPos.z - PLAYER_CONFIG.radius);
-    const maxZ = Math.floor(testPos.z + PLAYER_CONFIG.radius);
+    const maxZ = Math.ceil(testPos.z + PLAYER_CONFIG.radius);
     
     // Check all blocks that intersect with the player's bounding box
     for (let x = minX; x <= maxX; x++) {
