@@ -28,7 +28,7 @@ class Player {
     };
 
     // Mouse control
-    this.pitch = 0;
+    this.pitch = -0.3; // Start looking slightly downward to see terrain
     this.yaw = 0;
     this.mouseSensitivity = 0.002;
 
