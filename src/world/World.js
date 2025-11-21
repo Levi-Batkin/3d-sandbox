@@ -99,6 +99,26 @@ class World {
   }
 
   /**
+   * Find the highest solid block at the given x, z coordinates
+   * Returns the y coordinate of the top solid block, or -1 if no solid blocks found
+   */
+  getHighestBlockAt(x, z) {
+    // Ensure the chunk is loaded
+    const chunkX = Math.floor(x / CHUNK_SIZE);
+    const chunkZ = Math.floor(z / CHUNK_SIZE);
+    this.getOrCreateChunk(chunkX, chunkZ);
+
+    // Search from top down for the first solid block
+    for (let y = CHUNK_HEIGHT - 1; y >= 0; y--) {
+      const block = this.getBlock(x, y, z);
+      if (block !== BlockType.AIR) {
+        return y;
+      }
+    }
+    return -1; // No solid blocks found
+  }
+
+  /**
    * Generate terrain for a chunk
    */
   generateChunkTerrain(chunk) {

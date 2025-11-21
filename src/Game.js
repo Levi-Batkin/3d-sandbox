@@ -120,15 +120,20 @@ class Game {
     this.player = new Player(this.camera, this.world);
     
     // Find a good spawn position (top of terrain)
-    let spawnY = 50;
-    for (let y = CHUNK_HEIGHT - 1; y >= 0; y--) {
-      const block = this.world.getBlock(0, y, 0);
-      if (block !== 0) { // Found solid block
-        spawnY = y + 2; // Spawn 2 blocks above to ensure clearance
-        break;
+    // Ensure spawn chunk and surrounding chunks are loaded first
+    const spawnX = 0;
+    const spawnZ = 0;
+    for (let dx = -1; dx <= 1; dx++) {
+      for (let dz = -1; dz <= 1; dz++) {
+        this.world.getOrCreateChunk(dx, dz);
       }
     }
-    this.player.position.set(0, spawnY, 0);
+    
+    // Find the highest solid block at spawn location
+    const highestBlock = this.world.getHighestBlockAt(spawnX, spawnZ);
+    const spawnY = highestBlock >= 0 ? highestBlock + 2 : 50; // Spawn 2 blocks above solid ground
+    
+    this.player.position.set(spawnX, spawnY, spawnZ);
     this.player.updateCameraPosition();
 
     this.isRunning = true;
