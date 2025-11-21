@@ -3,7 +3,7 @@ import World from './world/World.js';
 import Player from './player/Player.js';
 import StorageManager from './storage/StorageManager.js';
 import UIManager from './ui/UIManager.js';
-import { BlockProperties } from './config.js';
+import { BlockProperties, CHUNK_HEIGHT } from './config.js';
 
 /**
  * Main Game class - orchestrates all game systems
@@ -66,6 +66,7 @@ class Game {
       0.1,
       1000
     );
+    this.camera.up.set(0, 1, 0); // Ensure Y-axis is up
 
     // Renderer
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -118,12 +119,12 @@ class Game {
     // Create player
     this.player = new Player(this.camera, this.world);
     
-    // Find a good spawn position
+    // Find a good spawn position (top of terrain)
     let spawnY = 50;
-    for (let y = 0; y < 64; y++) {
+    for (let y = CHUNK_HEIGHT - 1; y >= 0; y--) {
       const block = this.world.getBlock(0, y, 0);
-      if (block === 0) { // Air
-        spawnY = y + 1;
+      if (block !== 0) { // Found solid block
+        spawnY = y + 2; // Spawn 2 blocks above to ensure clearance
         break;
       }
     }
