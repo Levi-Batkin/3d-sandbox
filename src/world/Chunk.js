@@ -15,14 +15,20 @@ class Chunk {
   }
 
   /**
+   * Get block index from local coordinates
+   */
+  getBlockIndex(x, y, z) {
+    return x + z * CHUNK_SIZE + y * CHUNK_SIZE * CHUNK_SIZE;
+  }
+
+  /**
    * Get block at local chunk coordinates
    */
   getBlock(x, y, z) {
     if (x < 0 || x >= CHUNK_SIZE || y < 0 || y >= CHUNK_HEIGHT || z < 0 || z >= CHUNK_SIZE) {
       return BlockType.AIR;
     }
-    const index = x + z * CHUNK_SIZE + y * CHUNK_SIZE * CHUNK_SIZE;
-    return this.blocks[index];
+    return this.blocks[this.getBlockIndex(x, y, z)];
   }
 
   /**
@@ -32,8 +38,7 @@ class Chunk {
     if (x < 0 || x >= CHUNK_SIZE || y < 0 || y >= CHUNK_HEIGHT || z < 0 || z >= CHUNK_SIZE) {
       return;
     }
-    const index = x + z * CHUNK_SIZE + y * CHUNK_SIZE * CHUNK_SIZE;
-    this.blocks[index] = blockType;
+    this.blocks[this.getBlockIndex(x, y, z)] = blockType;
     this.dirty = true;
   }
 

@@ -119,7 +119,7 @@ class World {
           lacunarity
         );
 
-        const height = Math.floor(baseHeight + noiseValue * heightMultiplier);
+        const height = Math.max(0, Math.floor(baseHeight + noiseValue * heightMultiplier));
 
         // Place blocks
         for (let y = 0; y < height && y < CHUNK_HEIGHT; y++) {

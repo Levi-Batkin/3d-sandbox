@@ -2,6 +2,11 @@
  * Simple Perlin-like noise implementation for terrain generation
  */
 class NoiseGenerator {
+  // Linear congruential generator constants
+  static LCG_MULTIPLIER = 9301;
+  static LCG_INCREMENT = 49297;
+  static LCG_MODULUS = 233280;
+
   constructor(seed = Math.random()) {
     this.seed = seed;
     this.p = this.generatePermutation();
@@ -26,8 +31,8 @@ class NoiseGenerator {
   seededRandom(seed) {
     let value = seed;
     return () => {
-      value = (value * 9301 + 49297) % 233280;
-      return value / 233280;
+      value = (value * NoiseGenerator.LCG_MULTIPLIER + NoiseGenerator.LCG_INCREMENT) % NoiseGenerator.LCG_MODULUS;
+      return value / NoiseGenerator.LCG_MODULUS;
     };
   }
 

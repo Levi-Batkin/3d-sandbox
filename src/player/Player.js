@@ -165,16 +165,23 @@ class Player {
     }
   }
 
+  /**
+   * Check if a position is occupied by the player
+   */
+  isPositionOccupiedByPlayer(x, y, z) {
+    const playerBlockX = Math.floor(this.position.x);
+    const playerBlockY = Math.floor(this.position.y);
+    const playerBlockZ = Math.floor(this.position.z);
+    
+    return x === playerBlockX && (y === playerBlockY || y === playerBlockY - 1) && z === playerBlockZ;
+  }
+
   placeBlock() {
     const result = this.raycast();
     if (result.hit && result.placePosition) {
       const { x, y, z } = result.placePosition;
       // Don't place block where player is standing
-      const playerBlockX = Math.floor(this.position.x);
-      const playerBlockY = Math.floor(this.position.y);
-      const playerBlockZ = Math.floor(this.position.z);
-      
-      if (!(x === playerBlockX && (y === playerBlockY || y === playerBlockY - 1) && z === playerBlockZ)) {
+      if (!this.isPositionOccupiedByPlayer(x, y, z)) {
         this.world.setBlock(x, y, z, this.selectedBlock);
       }
     }
