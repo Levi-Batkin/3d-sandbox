@@ -28,7 +28,7 @@ class Player {
     };
 
     // Mouse control
-    this.pitch = 0;
+    this.pitch = -0.3; // Start looking slightly downward to see terrain
     this.yaw = 0;
     this.mouseSensitivity = 0.002;
 
@@ -167,13 +167,21 @@ class Player {
 
   /**
    * Check if a position is occupied by the player
+   * Uses the player's bounding box to prevent placing blocks inside the player
    */
   isPositionOccupiedByPlayer(x, y, z) {
-    const playerBlockX = Math.floor(this.position.x);
-    const playerBlockY = Math.floor(this.position.y);
-    const playerBlockZ = Math.floor(this.position.z);
+    // Define player bounding box and cache floor/ceil values for performance
+    const minX = Math.floor(this.position.x - PLAYER_CONFIG.radius);
+    const maxX = Math.ceil(this.position.x + PLAYER_CONFIG.radius);
+    const minY = Math.floor(this.position.y);
+    const maxY = Math.ceil(this.position.y + PLAYER_CONFIG.height);
+    const minZ = Math.floor(this.position.z - PLAYER_CONFIG.radius);
+    const maxZ = Math.ceil(this.position.z + PLAYER_CONFIG.radius);
     
-    return x === playerBlockX && (y === playerBlockY || y === playerBlockY - 1) && z === playerBlockZ;
+    // Check if block position intersects with player bounding box
+    return x >= minX && x <= maxX &&
+           y >= minY && y <= maxY &&
+           z >= minZ && z <= maxZ;
   }
 
   placeBlock() {
@@ -189,32 +197,32 @@ class Player {
 
   /**
    * Check collision in a direction
+   * Uses a bounding box approach to check if the player collides with any solid blocks
    */
   checkCollision(offset) {
     const testPos = this.position.clone().add(offset);
     
-    // Check multiple points around player
-    const points = [
-      new THREE.Vector3(PLAYER_CONFIG.radius, 0, 0),
-      new THREE.Vector3(-PLAYER_CONFIG.radius, 0, 0),
-      new THREE.Vector3(0, 0, PLAYER_CONFIG.radius),
-      new THREE.Vector3(0, 0, -PLAYER_CONFIG.radius),
-      new THREE.Vector3(0, PLAYER_CONFIG.height, 0),
-      new THREE.Vector3(0, PLAYER_CONFIG.height / 2, 0)
-    ];
-
-    for (const point of points) {
-      const checkPos = testPos.clone().add(point);
-      const x = Math.floor(checkPos.x);
-      const y = Math.floor(checkPos.y);
-      const z = Math.floor(checkPos.z);
-      
-      const block = this.world.getBlock(x, y, z);
-      if (block !== BlockType.AIR) {
-        return true;
+    // Define player bounding box and cache floor/ceil values for performance
+    const minX = Math.floor(testPos.x - PLAYER_CONFIG.radius);
+    const maxX = Math.ceil(testPos.x + PLAYER_CONFIG.radius);
+    const minY = Math.floor(testPos.y);
+    const maxY = Math.ceil(testPos.y + PLAYER_CONFIG.height);
+    const minZ = Math.floor(testPos.z - PLAYER_CONFIG.radius);
+    const maxZ = Math.ceil(testPos.z + PLAYER_CONFIG.radius);
+    
+    // Check all blocks that intersect with the player's bounding box
+    for (let x = minX; x <= maxX; x++) {
+      for (let y = minY; y <= maxY; y++) {
+        for (let z = minZ; z <= maxZ; z++) {
+          const block = this.world.getBlock(x, y, z);
+          if (block !== BlockType.AIR) {
+            // Found a collision with a solid block
+            return true;
+          }
+        }
       }
     }
-
+    
     return false;
   }
 
